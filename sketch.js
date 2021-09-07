@@ -104,6 +104,7 @@ function keyTyped() {
         //
       } else {
         splitey += 64;
+        scrollBy(0,64);
       }
     }
   } else if (key === "w") {
@@ -114,6 +115,7 @@ function keyTyped() {
       let alpha = 0;
     } else {
         splitey -= 64;
+        scrollBy(0,-64);
     }
   } else if (key === "d") {
     var c = get(splitex + 64, splitey);
