@@ -1,7 +1,7 @@
 function preload() {
-  img1 = loadImage("1階.png");
-  img2 = loadImage("2階.png");
-  img3 = loadImage("3階.png");
+  img1 = loadImage("1階.svg");
+  img2 = loadImage("2階.svg");
+  img3 = loadImage("3階.svg");
   QR1 = loadImage("1.png");
   QR2 = loadImage("2.png");
   QR3 = loadImage("3.png");
