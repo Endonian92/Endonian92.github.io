@@ -1,3 +1,8 @@
+function cheat(){
+  order_religion = 4;
+  order_natade = 7;
+  order_notice = 9;
+}
 function preload() {
   img1 = loadImage("1階.png");
   img2 = loadImage("2階.png");
