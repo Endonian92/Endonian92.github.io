@@ -632,7 +632,6 @@ function event() {
     imageMode(CENTER);
     if (hard == true) {
       image(QR31, splitex, splitey); //ハード
-      order_religion = 3;
     } else {
       image(QR31, splitex, splitey); //イージー
     }
@@ -642,7 +641,7 @@ function event() {
         "1回目はキャンセルを押し、QRコードを読み終わったらOKを押してください。"
       )
     ) {
-      order_religion = 1;
+      if (hard == true){order_religion = 3;}else{order_religion = 1;}
     }
   } else if (
     splitex == 416 &&
