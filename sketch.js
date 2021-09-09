@@ -703,7 +703,7 @@ function event() {
         "1回目はキャンセルを押し、QRコードを読み終わったらOKを押してください。"
       )
     ) {
-      window.location.href = "https://endonian92.github.io/cresits.html";
+      alert('This is the end of the story.');
     }
   } else {
     eve = 0;
