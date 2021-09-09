@@ -498,6 +498,7 @@ function event() {
       )
     ) {
       window.location.href = "https://endonian92.github.io/cresits.html";
+      order_notice = 10;
     }
   } else if (
     splitex == 864 &&
@@ -624,6 +625,7 @@ function event() {
       )
     ) {
       window.location.href = "https://endonian92.github.io/cresits.html";
+      order_natade = 7;
     }
   } else if (
     splitex == 2144 &&
@@ -703,7 +705,8 @@ function event() {
         "1回目はキャンセルを押し、QRコードを読み終わったらOKを押してください。"
       )
     ) {
-      alert('This is the end of the story.');
+      window.location.href = "https://endonian92.github.io/cresits.html";
+      order_religion = 4;
     }
   } else {
     eve = 0;
