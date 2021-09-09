@@ -492,7 +492,7 @@ function event() {
         "1回目はキャンセルを押し、QRコードを読み終わったらOKを押してください。"
       )
     ) {
-      window.location.href('cresits.html')
+      location.href("https://endonian92.github.io/cresits.html");
     }
   } else if (
     splitex == 864 &&
@@ -618,7 +618,7 @@ function event() {
         "1回目はキャンセルを押し、QRコードを読み終わったらOKを押してください。"
       )
     ) {
-      window.location.href('cresits.html')
+      location.href("https://endonian92.github.io/cresits.html");
     }
   } else if (
     splitex == 2144 &&
@@ -699,7 +699,7 @@ function event() {
         "1回目はキャンセルを押し、QRコードを読み終わったらOKを押してください。"
       )
     ) {
-      window.location.href('cresits.html')
+      location.href("https://endonian92.github.io/cresits.html");
     }
   } else {
     eve = 0;
