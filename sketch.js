@@ -492,7 +492,6 @@ function event() {
         "1回目はキャンセルを押し、QRコードを読み終わったらOKを押してください。"
       )
     ) {
-      order_notice = 10;
       window.location.href('cresits.html')
     }
   } else if (
@@ -619,7 +618,6 @@ function event() {
         "1回目はキャンセルを押し、QRコードを読み終わったらOKを押してください。"
       )
     ) {
-      order_natade = 7;
       window.location.href('cresits.html')
     }
   } else if (
