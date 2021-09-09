@@ -32,6 +32,8 @@ function preload() {
 }
 function setup() {
   createCanvas(2304, 1599);
+  help = createButton("ヘルプ");
+  help.position(splitex - 256,splitey - 256);
   up_arrow = createButton("⬆");
   up_arrow.position(splitex - 40, splitey - 128);
   up_arrow.size(30, 30);
