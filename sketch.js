@@ -701,7 +701,6 @@ function event() {
         "1回目はキャンセルを押し、QRコードを読み終わったらOKを押してください。"
       )
     ) {
-      order_religion = 4;
       window.location.href('cresits.html')
     }
   } else {
