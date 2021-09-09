@@ -492,7 +492,6 @@ function event() {
         "1回目はキャンセルを押し、QRコードを読み終わったらOKを押してください。"
       )
     ) {
-      order_notice = 10;
       window.location.href = "https://endonian92.github.io/cresits.html";
     }
   } else if (
@@ -619,7 +618,6 @@ function event() {
         "1回目はキャンセルを押し、QRコードを読み終わったらOKを押してください。"
       )
     ) {
-      order_natade = 7;
       window.location.href = "https://endonian92.github.io/cresits.html";
     }
   } else if (
@@ -700,7 +698,6 @@ function event() {
         "1回目はキャンセルを押し、QRコードを読み終わったらOKを押してください。"
       )
     ) {
-      order_religion = 4;
       window.location.href = "https://endonian92.github.io/cresits.html";
     }
   } else {
@@ -712,7 +709,7 @@ var order_notice_place = [
   [1376, 1184, 3],
   [224, 1184, 2],
   [2144, 160, 3],
-  [1376, 1184, 3], //仮
+  [1376, 1184, 1], //仮
   [96, 288, 3],
   [2144, 1184, 2],
   [1184, 1440, 1],
