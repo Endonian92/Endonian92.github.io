@@ -339,7 +339,7 @@ function event() {
   } else if (
     splitex == 1376 &&
     splitey == 1184 &&
-    floo == 2 &&
+    floo == 1 &&
     route == 1 &&
     order_notice == 3
   ) {
