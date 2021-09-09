@@ -493,6 +493,7 @@ function event() {
       )
     ) {
       order_notice = 10;
+      window.location.href('cresits.html')
     }
   } else if (
     splitex == 864 &&
@@ -619,6 +620,7 @@ function event() {
       )
     ) {
       order_natade = 7;
+      window.location.href('cresits.html')
     }
   } else if (
     splitex == 2144 &&
@@ -700,6 +702,7 @@ function event() {
       )
     ) {
       order_religion = 4;
+      window.location.href('cresits.html')
     }
   } else {
     eve = 0;
