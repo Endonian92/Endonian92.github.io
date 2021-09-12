@@ -639,9 +639,9 @@ function event() {
     //前庭書き忘れたし正面玄関前でいいよね。
     imageMode(CENTER);
     if (hard == true) {
-      image(QR31, splitex, splitey); //ハード
+      image(QR31, splitex-250, splitey+300); //ハード
     } else {
-      image(QR31, splitex, splitey); //イージー
+      image(QR31, splitex-250, splitey+300); //イージー
     }
     imageMode(CORNER);
     if (
