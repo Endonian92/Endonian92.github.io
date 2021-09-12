@@ -33,18 +33,18 @@ function preload() {
 function setup() {
   createCanvas(2304, 1599);
   help = createButton("ヘルプ");
-  help.position(splitex - 256,splitey - 256);
+  help.position(splitex - 276,splitey - 276);
   up_arrow = createButton("⬆");
-  up_arrow.position(splitex - 40, splitey - 128);
+  up_arrow.position(splitex - 60, splitey - 148);
   up_arrow.size(30, 30);
   down_arrow = createButton("⬇");
-  down_arrow.position(splitex - 40, splitey - 98);
+  down_arrow.position(splitex - 60, splitey - 118);
   down_arrow.size(30, 30);
   right_arrow = createButton("➡");
-  right_arrow.position(splitex - 10, splitey - 98);
+  right_arrow.position(splitex - 30, splitey - 118);
   right_arrow.size(30, 30);
   left_arrow = createButton("⬅");
-  left_arrow.position(splitex - 70, splitey - 98);
+  left_arrow.position(splitex - 90, splitey - 118);
   left_arrow.size(30, 30);
 }
 var up_arrow,
