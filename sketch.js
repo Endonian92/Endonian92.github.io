@@ -367,7 +367,10 @@ function event() {
         "1回目はキャンセルを押し、QRコードを読み終わったらOKを押してください。"
       )
     ) {
-      order_notice = 4;
+      if (hard == true){
+       order_notice = 4;
+      }else{
+       order_notice = 5;
     }
   } else if (
     splitex == 96 &&
@@ -380,8 +383,6 @@ function event() {
     imageMode(CENTER);
     if (hard == true) {
       image(QR5, splitex, splitey); //ハード
-    } else {
-      image(QR5, splitex, splitey); //イージー
     }
     imageMode(CORNER);
     if (
@@ -412,6 +413,11 @@ function event() {
       )
     ) {
       order_notice = 6;
+      if (hard == true){
+        order_notice = 6;
+      }else{
+        order_notice = 7;
+      }
     }
   } else if (
     splitex == 1184 &&
@@ -424,8 +430,6 @@ function event() {
     imageMode(CENTER);
     if (hard == true) {
       image(QR7, splitex, splitey); //ハード
-    } else {
-      image(QR7, splitex, splitey); //イージー
     }
     imageMode(CORNER);
     if (
