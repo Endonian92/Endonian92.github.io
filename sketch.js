@@ -371,6 +371,7 @@ function event() {
        order_notice = 4;
       }else{
        order_notice = 5;
+      }
     }
   } else if (
     splitex == 96 &&
