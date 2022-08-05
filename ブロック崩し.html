@@ -39,6 +39,10 @@
                 ball.y += ball.vy;
                 if (ball.y + ball.vy > canvas.height ||ball.y + ball.vy < 0) {
                     ball.vy = -ball.vy;
+                    if(ball.vy>0){
+                        ball.vy *= 1.011
+                    }else if(ball.vy<0){
+                        ball.vy /= 0.99
                 }
                 if (ball.x + ball.vx > canvas.width ||ball.x + ball.vx < 0) {
                     ball.vx = -ball.vx;
