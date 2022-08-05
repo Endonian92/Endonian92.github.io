@@ -65,6 +65,13 @@
                     ball.vx = -ball.vx;
                 }
             }
+            body.addEventListener('keydown', event => {
+                if (event.code === 'ArrowRight' racket.x+=vx <= canvas.width) {
+                    racket.x += vx;
+                }else if(event.code === 'ArrowLeft' && racket.x-=vx >=0) {
+                    racket.x -= vx;
+                }
+            });
             raf = setInterval(draw, 20);
         </script>
     </dv1>
