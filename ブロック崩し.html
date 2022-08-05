@@ -12,7 +12,7 @@
         <script>
             const canvas = document.getElementById('canvas');
             const ctx = canvas.getContext('2d');
-
+            var raf;
             var ball = {
                 x: 100,
                 y: 100,
@@ -33,7 +33,7 @@
                 ball.y += ball.vy;
                 //raf = window.requestAnimationFrame(draw);
             }
-            setInterval(draw,16);
+            raf = setInterval(draw,16);
         </script>
     </dv1>
 </body>
