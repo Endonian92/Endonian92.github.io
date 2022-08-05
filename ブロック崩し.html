@@ -20,6 +20,8 @@
             var ball = {
                 x: 100,
                 y: 100,
+                vx: 5,
+                vy: 3,
                 radius: 25,
                 color: 'blue',
                 draw: function() {
@@ -37,10 +39,7 @@
                 ball.y += ball.vy;
                 //raf = window.requestAnimationFrame(draw);
             }
-            while(1){
-                draw();
-                setTimeout(16);
-            }
+            raf = setInterval(draw, 20);
         </script>
     </dv1>
 </body>
