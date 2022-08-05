@@ -23,7 +23,7 @@
                 vx: 5,
                 vy: -3,
                 radius: 15,
-                color: 'blue',
+                color: 'red',
                 draw: function() {
                     ctx.beginPath();
                     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, true);
@@ -32,8 +32,21 @@
                     ctx.fill();
                 }
             };
+            var racket = {
+                x: canvas.width/2,
+                y: canvas.height-20,
+                width: 40,
+                height: 17,
+                vx: 10,
+                color: 'blue'
+                draw: function() {
+                    ctx.beginPath();
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                }
+            }
             function draw(){
                 ctx.clearRect(0,0, canvas.width, canvas.height);
+                racket.draw();
                 ball.draw();
                 ball.x += ball.vx;
                 ball.y += ball.vy;
