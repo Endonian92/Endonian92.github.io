@@ -53,7 +53,7 @@
                 ball.draw();
                 ball.x += ball.vx;
                 ball.y += ball.vy;
-                if (ball.y + ball.vy > canvas.height ||ball.y + ball.vy < 0) {
+                if ((ball.y + ball.vy > racket.y && racket.x <= ball.x && ball.x <= racket.x + racket.width)||ball.y + ball.vy < 0) {
                     ball.vy = -ball.vy;
                     /*if(ball.vy>0 && ball.vy<=80){
                         ball.vy *= 1.3;
