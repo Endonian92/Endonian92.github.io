@@ -12,12 +12,10 @@
         <script>
             const canvas = document.getElementById('canvas');
             const ctx = canvas.getContext('2d');
-            ctx.arcTo(20, 20, 36, 36, 8);
+
             var ball = {
                 x: 100,
                 y: 100,
-                vx: 5,
-                vy: 2,
                 radius: 25,
                 color: 'blue',
                 draw: function() {
@@ -28,6 +26,8 @@
                     ctx.fill();
                 }
             };
+
+            ball.draw();
         </script>
     </dv1>
 </body>
