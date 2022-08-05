@@ -21,8 +21,8 @@
                 x: 100,
                 y: 100,
                 vx: 5,
-                vy: 3,
-                radius: 25,
+                vy: -3,
+                radius: 5,
                 color: 'blue',
                 draw: function() {
                     ctx.beginPath();
@@ -37,7 +37,12 @@
                 ball.draw();
                 ball.x += ball.vx;
                 ball.y += ball.vy;
-                //raf = window.requestAnimationFrame(draw);
+                if (ball.y + ball.vy > canvas.height ||ball.y + ball.vy < 0) {
+                    ball.vy = -ball.vy;
+                }
+                if (ball.x + ball.vx > canvas.width ||ball.x + ball.vx < 0) {
+                    ball.vx = -ball.vx;
+                }
             }
             raf = setInterval(draw, 20);
         </script>
