@@ -33,7 +33,10 @@
                 ball.y += ball.vy;
                 //raf = window.requestAnimationFrame(draw);
             }
-            raf = setInterval(draw,16);
+            while(1){
+                draw();
+                setTimeout(16);
+            }
         </script>
     </dv1>
 </body>
