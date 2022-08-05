@@ -22,7 +22,7 @@
                 y: 100,
                 vx: 5,
                 vy: -3,
-                radius: 5,
+                radius: 15,
                 color: 'blue',
                 draw: function() {
                     ctx.beginPath();
@@ -40,9 +40,9 @@
                 if (ball.y + ball.vy > canvas.height ||ball.y + ball.vy < 0) {
                     ball.vy = -ball.vy;
                     if(ball.vy>0){
-                        ball.vy *= 1.011;
+                        ball.vy *= 1.67;
                     }else if(ball.vy<0){
-                        ball.vy /= 0.99;
+                        ball.vy /= 0.6;
                     }
                 }
                 if (ball.x + ball.vx > canvas.width ||ball.x + ball.vx < 0) {
