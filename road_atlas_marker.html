@@ -172,6 +172,8 @@
       <button class="mode-btn national" id="btnNational"><span class="swatch"></span>国道を描く</button>
       <button class="mode-btn expwy" id="btnExpwy"><span class="swatch"></span>高速道路を描く</button>
       <button class="action-btn" id="btnUndo" disabled>1点戻す</button>
+      <button class="action-btn" id="btnDraftSave" disabled>ここまで一時保存</button>
+      <button class="action-btn" id="btnSnapChunk" disabled>ここまでをスナップ</button>
       <button class="action-btn" id="btnCancel" disabled>描画中止</button>
       <button class="action-btn confirm" id="btnFinish" disabled>この区間を確定</button>
       <label class="snap-toggle">
@@ -244,6 +246,8 @@
   const btnNational = document.getElementById('btnNational');
   const btnExpwy = document.getElementById('btnExpwy');
   const btnUndo = document.getElementById('btnUndo');
+  const btnDraftSave = document.getElementById('btnDraftSave');
+  const btnSnapChunk = document.getElementById('btnSnapChunk');
   const btnCancel = document.getElementById('btnCancel');
   const btnFinish = document.getElementById('btnFinish');
   const listWrap = document.getElementById('listWrap');
@@ -278,10 +282,15 @@
     async set(key, value){
       try{ localStorage.setItem(key, value); return true; }
       catch(e){ throw e; }
+    },
+    async delete(key){
+      try{ localStorage.removeItem(key); return true; }
+      catch(e){ return null; }
     }
   } : {
     async get(key){ return window.storage.get(key, false); },
-    async set(key, value){ return window.storage.set(key, value, false); }
+    async set(key, value){ return window.storage.set(key, value, false); },
+    async delete(key){ try{ return await window.storage.delete(key, false); }catch(e){ return null; } }
   };
 
   // ---------- road snapping (OSRM public map-matching service) ----------
@@ -309,12 +318,90 @@
     return latlngs;
   }
 
+  // ---------- in-progress draft (so an unfinished line survives a reload) ----------
+  // `confirmed` holds points that have already been locked in (either raw
+  // clicks the user chose not to snap, or the result of a previous chunk
+  // snap). `currentPoints` holds only the newest clicks that haven't been
+  // snapped yet. Splitting them like this lets long, complicated routes be
+  // snapped a bit at a time instead of failing as one giant request.
+  let confirmed = [];
+  function combinedPoints(){ return confirmed.concat(currentPoints); }
+
+  async function saveDraft(){
+    try{
+      if(combinedPoints().length){
+        await storageAdapter.set('draft', JSON.stringify({
+          type: currentType, confirmed, points: currentPoints
+        }));
+      }else{
+        await storageAdapter.delete('draft');
+      }
+    }catch(e){ console.warn('一時保存に失敗しました', e); }
+  }
+
+  async function restoreDraft(){
+    try{
+      const res = await storageAdapter.get('draft');
+      if(!res || !res.value) return;
+      const draft = JSON.parse(res.value);
+      const conf = draft && draft.confirmed ? draft.confirmed : [];
+      const pend = draft && draft.points ? draft.points : [];
+      if(conf.length + pend.length < 1) return;
+
+      drawing = true;
+      currentType = draft.type;
+      confirmed = conf;
+      currentPoints = pend;
+      mapEl.classList.add('drawing');
+      btnNational.classList.toggle('active', currentType === 'national');
+      btnExpwy.classList.toggle('active', currentType === 'expwy');
+      btnNational.disabled = currentType === 'expwy';
+      btnExpwy.disabled = currentType === 'national';
+      btnCancel.disabled = false;
+      currentPoints.forEach(pt => {
+        currentDots.push(L.circleMarker(pt, {
+          radius:4, color:COLORS[currentType], weight:2, fillColor:'#fff', fillOpacity:1
+        }).addTo(map));
+      });
+      redrawCurrentLine();
+      refreshDrawButtons();
+      showHint('描きかけの続きから再開できます。地図をクリックして続けてください');
+      const all = combinedPoints();
+      if(all.length >= 2){
+        map.fitBounds(L.polyline(all).getBounds(), { padding:[80,80], maxZoom:13 });
+      }
+    }catch(e){ console.warn('一時保存の復元に失敗しました', e); }
+  }
+
+  // Snaps just the newest unconfirmed clicks (plus the last confirmed point
+  // as an anchor, so the snapped piece connects smoothly to what came
+  // before) and folds the result into `confirmed`. Returns true on success.
+  async function attemptSnapChunk(){
+    if(currentPoints.length < 1) return false;
+    const anchor = confirmed.length ? confirmed[confirmed.length - 1] : null;
+    const input = anchor ? [anchor, ...currentPoints] : currentPoints.slice();
+    if(input.length < 2) return false;
+    try{
+      const matched = await snapToRoad(input);
+      if(!matched || matched.length < 2) return false;
+      confirmed = confirmed.concat(anchor ? matched.slice(1) : matched);
+      currentPoints = [];
+      currentDots.forEach(m => map.removeLayer(m));
+      currentDots = [];
+      return true;
+    }catch(err){
+      console.warn('区間スナップに失敗しました', err);
+      return false;
+    }
+  }
+
   // ---------- drawing mode ----------
   function startDrawing(type){
     if(drawing) resetCurrent(false);
     drawing = true;
     currentType = type;
     currentPoints = [];
+    confirmed = [];
     mapEl.classList.add('drawing');
     btnNational.classList.toggle('active', type==='national');
     btnExpwy.classList.toggle('active', type==='expwy');
@@ -327,6 +414,7 @@
 
   function resetCurrent(clearMode){
     currentPoints = [];
+    confirmed = [];
     if(currentLine){ map.removeLayer(currentLine); currentLine = null; }
     currentDots.forEach(m => map.removeLayer(m));
     currentDots = [];
@@ -342,17 +430,22 @@
       showHint('');
     }
     refreshDrawButtons();
+    saveDraft();
   }
 
   function refreshDrawButtons(){
+    const all = combinedPoints();
     btnUndo.disabled = currentPoints.length === 0;
-    btnFinish.disabled = currentPoints.length < 2;
+    btnFinish.disabled = all.length < 2;
+    btnDraftSave.disabled = all.length === 0;
+    btnSnapChunk.disabled = !(currentPoints.length >= 1 && (confirmed.length > 0 || currentPoints.length >= 2));
   }
 
   function redrawCurrentLine(){
     if(currentLine) map.removeLayer(currentLine);
-    if(currentPoints.length >= 2){
-      currentLine = L.polyline(currentPoints, {
+    const all = combinedPoints();
+    if(all.length >= 2){
+      currentLine = L.polyline(all, {
         color: COLORS[currentType], weight: 7, opacity: .55,
         lineCap:'round', lineJoin:'round', dashArray:'2 10'
       }).addTo(map);
@@ -369,41 +462,54 @@
     currentDots.push(dot);
     redrawCurrentLine();
     refreshDrawButtons();
-    showHint(currentPoints.length < 2
+    saveDraft();
+    showHint(combinedPoints().length < 2
       ? 'もう一点クリックすると線がつながります'
-      : 'クリックで頂点を追加、または「この区間を確定」で保存');
+      : 'クリックで頂点を追加、道が複雑なら「ここまでをスナップ」、終わったら「確定」');
   });
 
   btnNational.addEventListener('click', () => startDrawing('national'));
   btnExpwy.addEventListener('click', () => startDrawing('expwy'));
   btnCancel.addEventListener('click', () => resetCurrent(true));
+  btnDraftSave.addEventListener('click', async () => {
+    await saveDraft();
+    showHint(`ここまで(${combinedPoints().length}点)を一時保存しました。続けて描くか、後で再開できます`);
+  });
+  btnSnapChunk.addEventListener('click', async () => {
+    btnSnapChunk.disabled = true;
+    btnSnapChunk.textContent = 'スナップ中…';
+    showHint('ここまでの区間を道路データに合わせています…');
+    const ok = await attemptSnapChunk();
+    btnSnapChunk.textContent = 'ここまでをスナップ';
+    redrawCurrentLine();
+    refreshDrawButtons();
+    saveDraft();
+    showHint(ok
+      ? 'ここまでスナップしました。続きをクリックして描き進められます'
+      : 'この区間はスナップできませんでした。点を減らすか、そのまま手描きで確定できます');
+  });
   btnUndo.addEventListener('click', () => {
     currentPoints.pop();
     const d = currentDots.pop();
     if(d) map.removeLayer(d);
     redrawCurrentLine();
     refreshDrawButtons();
+    saveDraft();
   });
   btnFinish.addEventListener('click', async () => {
-    if(currentPoints.length < 2) return;
+    if(combinedPoints().length < 2) return;
     const snapOn = document.getElementById('snapToggle').checked;
-    let finalPoints = currentPoints.slice();
 
-    if(snapOn){
+    if(snapOn && currentPoints.length > 0){
       btnFinish.disabled = true;
       btnFinish.textContent = 'スナップ中…';
-      showHint('道路データに合わせています…');
-      try{
-        const snapped = await snapToRoad(currentPoints);
-        if(snapped && snapped.length >= 2) finalPoints = snapped;
-        showHint('道路にスナップしました');
-      }catch(err){
-        console.warn('道路スナップに失敗、手描きの線を使用します:', err);
-        showHint('スナップできなかったため、手描きの線のまま保存します');
-      }
+      showHint('残りの区間を道路データに合わせています…');
+      const ok = await attemptSnapChunk();
+      showHint(ok ? '道路にスナップしました' : 'スナップできなかった部分は手描きの線のまま保存します');
       btnFinish.textContent = 'この区間を確定';
     }
 
+    const finalPoints = combinedPoints();
     const route = {
       id: 'r_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
       type: currentType,
@@ -573,6 +679,7 @@
       layerById && Object.keys(layerById).forEach(k => delete layerById[k]);
       routes = [];
       await saveRoutes();
+      await storageAdapter.delete('draft');
       renderList();
       location.reload();
     });
@@ -590,7 +697,10 @@
   });
 
   refreshDrawButtons();
-  loadRoutes();
+  (async () => {
+    await loadRoutes();
+    await restoreDraft();
+  })();
 })();
 </script>
 </body>
