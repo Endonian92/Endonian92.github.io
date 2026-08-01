@@ -54,7 +54,7 @@
   .help-btn:hover{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
 
   .help-overlay{
-    position:fixed; inset:0; background:rgba(38,38,31,.55); z-index:100;
+    position:fixed; inset:0; background:rgba(38,38,31,.55); z-index:5000;
     display:none; align-items:center; justify-content:center; padding:24px;
   }
   .help-overlay.show{ display:flex; }
@@ -236,7 +236,7 @@
           <h3><span class="step-badge badge-expwy"></span>2. 描きながら調整する</h3>
           <p><b>1点戻す</b>：直前に置いた点を取り消します。<br>
           <b>ここまでをスナップ</b>：それまでにクリックした部分だけを実際の道路データに合わせます。道が入り組んでいて一度にスナップできない時は、少しずつクリック→スナップを繰り返すと通しやすくなります。<br>
-          <b>ここまで一時保存</b>：描いている途中の状態を保存します。ブラウザを閉じても、次回開いたときに続きから再開できます(実はクリックのたびに自動でも保存されています)。<br>
+          <b>ここまで一時保存</b>：描いている途中の状態を保存します。ブラウザを閉じても、次回開いたときに続きから再開できます(クリックのたびに自動保存されています)。<br>
           <b>描画中止</b>：今描いている線を破棄して、最初からやり直します。</p>
         </section>
         <section>
