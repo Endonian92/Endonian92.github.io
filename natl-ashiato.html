@@ -46,6 +46,42 @@
     border-left:1px dashed #00000022; border-right:1px dashed #00000022;
   }
   .brand p{ margin:0; font-size:12px; color:var(--ink-soft); }
+  .help-btn{
+    width:22px; height:22px; border-radius:50%; border:1.5px solid var(--ink-soft);
+    background:transparent; color:var(--ink-soft); font-weight:700; font-size:12px;
+    cursor:pointer; flex:none; line-height:1; font-family:'Zen Kaku Gothic New',sans-serif;
+  }
+  .help-btn:hover{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+
+  .help-overlay{
+    position:fixed; inset:0; background:rgba(38,38,31,.55); z-index:100;
+    display:none; align-items:center; justify-content:center; padding:24px;
+  }
+  .help-overlay.show{ display:flex; }
+  .help-card{
+    background:var(--card); width:min(560px, 100%); max-height:82vh; overflow-y:auto;
+    border-radius:10px; border:1px solid var(--paper-line); box-shadow:0 12px 40px rgba(0,0,0,.3);
+  }
+  .help-head{
+    position:sticky; top:0; display:flex; align-items:center; justify-content:space-between;
+    padding:16px 20px; background:var(--card); border-bottom:1px solid var(--paper-line);
+  }
+  .help-head h2{ font-family:'Shippori Mincho',serif; font-size:18px; margin:0; }
+  .help-close{
+    width:28px; height:28px; border-radius:50%; border:none; background:transparent;
+    font-size:18px; cursor:pointer; color:var(--ink-soft);
+  }
+  .help-close:hover{ background:var(--danger); color:#fff; }
+  .help-body{ padding:6px 20px 20px; }
+  .help-body section{ padding:14px 0; border-bottom:1px dashed var(--paper-line); }
+  .help-body section:last-child{ border-bottom:none; }
+  .help-body h3{
+    display:flex; align-items:center; gap:8px; font-size:14px; margin:0 0 8px;
+    font-family:'Zen Kaku Gothic New',sans-serif;
+  }
+  .help-body p{ margin:0; font-size:13px; line-height:1.9; color:var(--ink); }
+  .help-body b{ color:var(--ink); }
+  .step-badge{ width:16px; height:16px; flex:none; }
 
   .toolbar{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
   .mode-btn{
@@ -167,6 +203,7 @@
       <div class="tape"></div>
       <h1>制覇ノート</h1>
       <p>通った国道・高速道路を地図上でなぞって塗る</p>
+      <button class="help-btn" id="btnHelp" title="使い方">?</button>
     </div>
     <div class="toolbar">
       <button class="mode-btn national" id="btnNational"><span class="swatch"></span>国道を描く</button>
@@ -183,6 +220,40 @@
     </div>
     <div class="hint" id="hint"></div>
   </header>
+
+  <div class="help-overlay" id="helpOverlay">
+    <div class="help-card">
+      <div class="help-head">
+        <h2>使い方</h2>
+        <button class="help-close" id="btnHelpClose">×</button>
+      </div>
+      <div class="help-body">
+        <section>
+          <h3><span class="step-badge badge-national"></span>1. 種類を選んで描き始める</h3>
+          <p>「国道を描く」または「高速道路を描く」を押すと描画モードに入ります。あとは地図をクリックしていくだけで、通ったルートに沿って頂点を置いていけます。</p>
+        </section>
+        <section>
+          <h3><span class="step-badge badge-expwy"></span>2. 描きながら調整する</h3>
+          <p><b>1点戻す</b>：直前に置いた点を取り消します。<br>
+          <b>ここまでをスナップ</b>：それまでにクリックした部分だけを実際の道路データに合わせます。道が入り組んでいて一度にスナップできない時は、少しずつクリック→スナップを繰り返すと通しやすくなります。<br>
+          <b>ここまで一時保存</b>：描いている途中の状態を保存します。ブラウザを閉じても、次回開いたときに続きから再開できます(実はクリックのたびに自動でも保存されています)。<br>
+          <b>描画中止</b>：今描いている線を破棄して、最初からやり直します。</p>
+        </section>
+        <section>
+          <h3>3. 区間を確定する</h3>
+          <p>「この区間を確定」を押すと、まだスナップしていない残りの部分を自動でスナップしてから、正式な区間として保存されます。ヘッダーの「道路にスナップ」のチェックを外しておくと、スナップせず手描きのまま確定できます。</p>
+        </section>
+        <section>
+          <h3>4. 右側のリストでできること</h3>
+          <p>保存した区間をクリックするとその場所に地図が移動します。名前は入力欄をクリックして自由に書き換えられます。× ボタンで個別に削除できます。上部には国道・高速道路それぞれの合計距離が表示されます。</p>
+        </section>
+        <section>
+          <h3>5. バックアップ</h3>
+          <p>画面下の「バックアップを書き出す」でデータをファイルとして保存し、「読み込む」で復元できます。ブラウザを変えたり、データを他の端末に移したいときに使ってください。「すべて消去」はすべての区間を削除するので注意してください。</p>
+        </section>
+      </div>
+    </div>
+  </div>
   <main>
     <div id="map"></div>
     <aside>
@@ -684,6 +755,16 @@
       location.reload();
     });
     wrap.querySelector('.no').addEventListener('click', () => location.reload());
+  });
+
+  const helpOverlay = document.getElementById('helpOverlay');
+  document.getElementById('btnHelp').addEventListener('click', () => helpOverlay.classList.add('show'));
+  document.getElementById('btnHelpClose').addEventListener('click', () => helpOverlay.classList.remove('show'));
+  helpOverlay.addEventListener('click', (e) => {
+    if(e.target === helpOverlay) helpOverlay.classList.remove('show');
+  });
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') helpOverlay.classList.remove('show');
   });
 
   document.getElementById('btnExport').addEventListener('click', exportBackup);
